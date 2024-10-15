@@ -28,8 +28,9 @@ customers_raw_data_new_df = customers_raw_data.withColumnRenamed("annual_inc", "
 cus_new_df = customers_raw_data_new_df.withColumn("ingest_date",current_timestamp())
 
 cus_new_df.count()
-
+print('distinct customers')
 cus_new_df.distinct()
+
 
 
 

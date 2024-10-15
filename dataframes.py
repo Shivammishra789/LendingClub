@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import sha2, concat_ws, current_timestamp
+from pyspark.sql.functions import sha2, concat_ws, current_timestamp,regexp_replace, col
 
 spark = SparkSession.builder.master("local[1]") \
         .appName("SparkPractice") \
@@ -38,3 +38,9 @@ customers_income_filtered = spark.sql("select * from customers where annual_inco
 customers_income_filtered.createOrReplaceTempView("customers")
 spark.sql("select count(*) from customers where annual_income is null")
 spark.sql("select distinct(emp_length) from customers")
+
+customers_emplength_cleaned = customers_income_filtered.withColumn("emp_length", regexp_replace(col("emp_length"), "(\D)",""))
+
+customers_emplength_cleaned.printSchema()
+
+customers_emplength_casted = customers_emplength_cleaned.withColumn("emp_length", customers_emplength_cleaned.emp_length.cast('int'))

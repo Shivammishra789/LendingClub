@@ -44,3 +44,42 @@ customers_emplength_cleaned = customers_income_filtered.withColumn("emp_length",
 customers_emplength_cleaned.printSchema()
 
 customers_emplength_casted = customers_emplength_cleaned.withColumn("emp_length", customers_emplength_cleaned.emp_length.cast('int'))
+customers_emplength_casted.printSchema()
+
+customers_emplength_casted.filter("emp_length is null").count()
+customers_emplength_casted.createOrReplaceTempView("customers")
+avg_emp_length = spark.sql("select floor(avg(emp_length)) as avg_emp_length from customers").collect()
+
+print(avg_emp_length)
+avg_emp_duration = avg_emp_length[0][0]
+print(avg_emp_duration)
+customers_emplength_replaced = customers_emplength_casted.na.fill(avg_emp_duration, subset=['emp_length'])
+
+customers_emplength_replaced.filter("emp_length is null").count()
+customers_emplength_replaced.createOrReplaceTempView("customers")
+spark.sql("select distinct(address_state) from customers")
+
+spark.sql("select count(address_state) from customers where length(address_state)>2")
+
+from pyspark.sql.functions import when, col, length
+
+customers_state_cleaned = customers_emplength_replaced.withColumn(
+    "address_state",
+    when(length(col("address_state"))> 2, "NA").otherwise(col("address_state"))
+)
+
+customers_state_cleaned.select("address_state").distinct()
+
+customers_state_cleaned.write \
+    .format("parquet") \
+    .mode("overwrite") \
+    .option("path", "C:/Users/Vaishnavi/pyspark/lendingclubproject/raw/cleaned/customers_parquet") \
+    .save()
+
+customers_state_cleaned.write \
+    .option("header", True) \
+    .format("csv") \
+    .mode("overwrite") \
+    .option("path", "C:/Users/Vaishnavi/pyspark/lendingclubproject/raw/cleaned/customers_csv") \
+    .save()
+

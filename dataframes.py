@@ -29,8 +29,12 @@ cus_new_df = customers_raw_data_new_df.withColumn("ingest_date",current_timestam
 
 cus_new_df.count()
 print('distinct customers')
-cus_new_df.distinct()
+customers_distinct = cus_new_df.distinct()
 
-
-
-
+customers_distinct.createOrReplaceTempView("customers")
+spark.sql("select * from customers")
+spark.sql("select count(*) from customers where annual_income is null")
+customers_income_filtered = spark.sql("select * from customers where annual_income is not null")
+customers_income_filtered.createOrReplaceTempView("customers")
+spark.sql("select count(*) from customers where annual_income is null")
+spark.sql("select distinct(emp_length) from customers")

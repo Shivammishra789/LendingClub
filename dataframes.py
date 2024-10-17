@@ -245,7 +245,7 @@ loans_payments_ndate_fixed_df.filter("next_payment_date = 0.0").count()
 loans_payments_ndate_fixed_df.write \
     .format("parquet") \
     .mode("overwrite") \
-    .option("path", "/user/itv006277/lendingclubproject/raw/cleaned/loans_repayments_parquet") \
+    .option("path", "C:/Users/Vaishnavi/pyspark/lendingclubproject/raw/cleaned/loans_repayments_parquet") \
     .save()
 
 
@@ -253,5 +253,6 @@ loans_payments_ndate_fixed_df.write \
     .option("header", True) \
     .format("csv") \
     .mode("overwrite") \
-    .option("path", "/user/itv006277/lendingclubproject/raw/cleaned/loans_repayments_csv") \
+    .option("path", "C:/Users/Vaishnavi/pyspark/lendingclubproject/raw/cleaned/loans_repayments_csv") \
     .save()
+
